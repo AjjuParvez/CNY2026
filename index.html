@@ -26,7 +26,7 @@
     background: var(--page-bg);
     color: var(--text-1);
     min-height: 100vh;
-    /* NEW: prevent any sideways scrolling from emoji or shadows */
+    /* Prevent sideways scroll from emoji/shadows */
     overflow-x: hidden;
   }
 
@@ -34,13 +34,13 @@
   .lantern-layer{
     position: fixed;
     inset: 0;
-    overflow: hidden;         /* clip animation overflow */
-    z-index: 0;               /* behind card */
-    pointer-events: none;     /* let clicks go through */
+    overflow: hidden;  /* clip animation overflow */
+    z-index: 0;        /* behind card */
+    pointer-events: none;
   }
   .lantern{
     position: absolute;
-    width: 40px; height: 60px;        /* slightly smaller for perf */
+    width: 40px; height: 60px;
     display: grid;
     place-items: center;
     filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
@@ -50,7 +50,6 @@
   }
   .lantern span{ font-size: 38px; line-height: 1; }
 
-  /* Keyframes */
   @keyframes rise {
     0%   { transform: translate3d(0,110vh,0); opacity: 0; }
     8%   { opacity: 1; }
@@ -76,19 +75,18 @@
   /* ---------- Layout: Greeting Card ---------- */
   .wrap{
     position: relative;
-    z-index: 1;                       /* above lanterns */
+    z-index: 1;  /* above lanterns */
     min-height: 100%;
     display: grid;
     place-items: center;
-    padding: 40px 16px;               /* base padding (mobile-first) */
+    padding: 40px 16px;  /* mobile-first */
   }
-  /* NEW: add more breathing room on desktop */
+  /* Extra breathing room on desktop */
   @media (min-width: 768px){
     .wrap{ padding-top: 72px; padding-bottom: 56px; }
   }
 
   .card{
-    /* NEW: ensure we never touch the viewport edges */
     width: min(860px, calc(100vw - 32px));
     background: var(--card-bg);
     border: 2px solid var(--card-border);
@@ -101,8 +99,6 @@
     background: linear-gradient(135deg, #990000 0%, #b30000 60%, #cc0000 100%);
     padding: 26px 22px; text-align: center; color: var(--accent-2);
   }
-
-  /* NEW: scale headings & text safely across desktop widths */
   .card__header h1{
     margin:0;
     letter-spacing:.5px;
@@ -115,8 +111,6 @@
   }
 
   .card__body{ padding: 26px 28px 8px 28px; text-align:center; }
-
-  /* NEW: responsive copy sizes */
   .msg{
     font-size: clamp(16px, 1.6vw, 20px);
     color:var(--text-1);
@@ -138,17 +132,24 @@
     display: block; margin: 0 auto;
   }
 
+  .credit{
+    font-size: 12px;
+    color: #8a5a2a;
+    margin-top: 6px;
+  }
+  .credit a{ color:#8a5a2a; text-decoration: underline; }
+
   .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
   .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
 
-  /* ---------- Mobile performance tweaks ---------- */
+  /* ---------- Mobile tweaks ---------- */
   @media (max-width: 520px){
     .lantern{ width: 34px; height: 50px; }
     .lantern span{ font-size: 32px; }
     .hide-sm{ display:none; }
   }
 
-  /* ---------- Respect user “Reduce Motion” ---------- */
+  /* ---------- Reduce Motion ---------- */
   @media (prefers-reduced-motion: reduce){
     .lantern{ animation: none !important; }
   }
@@ -192,10 +193,14 @@
         <div class="msg-box">
           <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
 
-          <!-- Animated GIF -->
-          <img
-            src="https://bestanimations.com/uploads/gifs/1741924090beautiful-happy-lunar-new-year-2026-animated-gif.gif.pagespeed.ce.xc-ynuVQ4j.gif"
-            alt="Happy Lunar New Year 2026 – Year of the Horse animated greeting with fireworks" />
+          <!-- 🖼️ Local image from your Pinterest pin -->
+          <img src="assets/cny-horse.jpg"
+               alt="Chinese New Year 2026 horse illustration with festive red and gold decoration" loading="lazy" />
+
+          <!-- Optional credit (keep if you like) -->
+          <div class="credit">
+            Artwork reference: <a href="https://www.pinterest.com/pin/8373949303770686/" target="_blank" rel="noopener">Pinterest pin</a>
+          </div>
         </div>
 
         <hr class="divider" aria-hidden="true" />
