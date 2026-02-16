@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SGMM Ops — Happy Chinese New Year 2026</title>
-<meta name="version" content="auto-fit-desktop-2026-02-16" />
+<meta name="version" content="lantern-fix-smaller-continuous-2026-02-16" />
 
 <style>
   /* ---------- Base & easy tuning ---------- */
@@ -28,10 +28,13 @@
     --gold-4: #a77000;
     --glow:   rgba(255, 204, 64, .35);
 
-    /* Desktop defaults (used as base if not in "Fit to screen" mode) */
-    --desktop-scale: 1;        /* we’ll compute scale in JS for “Fit” mode */
+    /* Desktop auto-fit defaults (JS will compute the final scale) */
+    --desktop-scale: 1;
     --desktop-top-gap: 16px;
-    --logoH-desktop: 56px;     /* bigger logos */
+    --logoH-desktop: 56px;
+
+    /* Floating lantern safe zone */
+    --lantern-safe-top: 100px;  /* nothing will render above this line on desktop */
   }
 
   html, body {
@@ -75,50 +78,73 @@
     background-position: 0 0;
   }
 
-  /* ---------- Floating lanterns (animated) ---------- */
-  .lantern-layer{
+  /* ---------- Floating lanterns (animated, smaller, continuous) ---------- */
+  #lanterns{
     position: fixed; inset: 0; overflow: hidden;
-    z-index: 1; pointer-events: none;
+    z-index: 1;                /* behind card */
+    pointer-events: none;
+    /* prevent overlap above the header: clip the top 'safe' band */
+    clip-path: inset(var(--lantern-safe-top) 0 0 0);
   }
+
   .lantern{
-    position: absolute; width: 40px; height: 60px;
+    position: absolute;
+    /* Base size reduced ~30% */
+    width: 28px; height: 42px;
     display: grid; place-items: center;
     filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
     backface-visibility: hidden; will-change: transform, filter;
-    animation: rise linear infinite, sway ease-in-out infinite, twinkle ease-in-out infinite;
+    /* parent rises; inner sways (so we can include scale in sway transform) */
+    animation: rise var(--rise, 32s) linear infinite;
   }
-  .lantern span{ font-size: 38px; line-height: 1; }
 
-  @keyframes rise { 0%{transform:translate3d(0,110vh,0);opacity:0} 8%{opacity:1} 100%{transform:translate3d(0,-20vh,0);opacity:.95} }
-  @keyframes sway { 0%{transform:translate3d(0,0,0)} 50%{transform:translate3d(18px,0,0)} 100%{transform:translate3d(0,0,0)} }
-  @keyframes twinkle { 0%,100%{filter:drop-shadow(0 6px 10px rgba(0,0,0,.45)) brightness(1)} 50%{filter:drop-shadow(0 6px 12px rgba(0,0,0,.5)) brightness(1.15)} }
-  .t1{ animation-duration: 26s,5.5s,3.8s }
-  .t2{ animation-duration: 30s,6.2s,4.4s; animation-delay: 4s,.4s,.8s }
-  .t3{ animation-duration: 34s,6.8s,3.6s; animation-delay: 8s,.2s,1.2s }
-  .t4{ animation-duration: 28s,5.8s,4.0s; animation-delay: 2s,.1s,0s }
-  .t5{ animation-duration: 36s,7.2s,3.2s; animation-delay: 10s,.6s,.3s }
-  .t6{ animation-duration: 32s,6.4s,4.6s; animation-delay: 6s,.3s,.9s }
-  .t7{ animation-duration: 40s,7.8s,3.9s; animation-delay: 12s,.8s,.5s }
+  .lantern__inner{
+    width: 100%; height: 100%;
+    display: grid; place-items: center;
+    animation: sway var(--sway, 6.2s) ease-in-out infinite,
+               twinkle var(--tw, 4s) ease-in-out infinite;
+    transform: translateX(0) scale(var(--scale, 0.9));
+  }
 
-  /* ---------- Stage (centers card) ---------- */
+  .lantern span{
+    font-size: 24px;    /* smaller emoji */
+    line-height: 1;
+  }
+
+  /* Keyframes */
+  @keyframes rise {
+    0%   { transform: translate3d(0, 110vh, 0); opacity: 0; }
+    8%   { opacity: 1; }
+    100% { transform: translate3d(0, -25vh, 0); opacity: .95; }
+  }
+  @keyframes sway {
+    0%   { transform: translateX(0) scale(var(--scale, 0.9)); }
+    50%  { transform: translateX(14px) scale(var(--scale, 0.9)); }
+    100% { transform: translateX(0) scale(var(--scale, 0.9)); }
+  }
+  @keyframes twinkle {
+    0%,100% { filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)) brightness(1); }
+    50%     { filter: drop-shadow(0 6px 12px rgba(0,0,0,.5)) brightness(1.15); }
+  }
+
+  /* ---------- Stage (centers card; desktop auto-fit) ---------- */
   .stage{
     min-height: 100vh; display: grid; place-items: start center;
     padding: 40px 16px; position: relative; z-index: 2;
   }
   @media (min-width: 900px){
-    body{ overflow-y: hidden; } /* in Fit mode we’ll prevent scroll */
+    body{ overflow-y: hidden; } /* when auto-fit is active */
     .stage{ padding: 0 16px; }
   }
 
-  /* Scaler wrapper: we will set transform: scale(X) via JS for “Fit” mode */
   .desk-scale{ transform-origin: top center; }
   @media (min-width: 900px){
     .desk-scale{ margin-top: var(--desktop-top-gap); transform: scale(var(--desktop-scale)); }
   }
 
-  /* ---------- Card ---------- */
+  /* ---------- Card (bigger words & image kept) ---------- */
   .card{
-    width: min(940px, calc(100vw - 32px)); /* a bit wider base for bigger look */
+    width: min(940px, calc(100vw - 32px));
     background: var(--card-bg);
     border: 2px solid var(--card-border);
     border-radius: 16px;
@@ -130,7 +156,6 @@
     background: linear-gradient(135deg, #990000 0%, #b30000 60%, #cc0000 100%);
     padding: 28px 24px; text-align: center; color: var(--accent-2);
   }
-  /* Bigger headings */
   .card__header h1{
     margin:0; letter-spacing:.6px; font-weight: 900;
     font-size: clamp(30px, 4.0vw, 48px);
@@ -158,7 +183,7 @@
 
   /* ---------- GOLD FRAME + GLOW ---------- */
   .gold-frame{
-    position: relative; border-radius: 14px; padding: 12px; /* thicker frame */
+    position: relative; border-radius: 14px; padding: 12px;
     background: linear-gradient(145deg, var(--gold-4), var(--gold-2), var(--gold-1), var(--gold-3));
     box-shadow: 0 0 0 1px rgba(0,0,0,.05) inset, 0 16px 30px rgba(0,0,0,.20), 0 0 24px 5px var(--glow);
     transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
@@ -177,14 +202,9 @@
     display:block; width: 100%; height: auto; border-radius: 10px;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), inset 0 0 24px rgba(255,240,140,.35);
   }
-
-  /* Let the picture be taller on desktop; final fit is handled by overall scaling */
   @media (min-width: 900px){
     .gold-img{ max-height: 64vh; width: auto; max-width: 100%; object-fit: contain; }
   }
-
-  @keyframes shimmer { 0%{box-shadow:inset 0 0 24px rgba(255,240,140,.30)} 50%{box-shadow:inset 0 0 36px rgba(255,240,160,.45)} 100%{box-shadow:inset 0 0 24px rgba(255,240,140,.30)} }
-  .gold-img.glow { animation: shimmer 4.2s ease-in-out infinite; }
 
   .divider{ border:0; border-top:2px solid var(--card-border); margin:20px auto; width:88%; }
 
@@ -228,15 +248,15 @@
 
   /* ---------- Mobile tweaks ---------- */
   @media (max-width: 520px){
-    .lantern{ width:34px; height:50px; }
-    .lantern span{ font-size:32px; }
+    .lantern{ width:24px; height:36px; }
+    .lantern span{ font-size: 21px; }
     .hide-sm{ display:none; }
+    :root{ --lantern-safe-top: 64px; } /* smaller safe zone on mobile */
   }
 
   /* ---------- Reduce Motion ---------- */
   @media (prefers-reduced-motion: reduce){
-    .lantern{ animation: none !important; }
-    .gold-img.glow{ animation: none !important; }
+    #lanterns, .lantern, .lantern__inner{ animation: none !important; }
   }
 </style>
 </head>
@@ -245,24 +265,8 @@
   <!-- Lantern wallpaper behind everything -->
   <div class="lantern-wallpaper" aria-hidden="true"></div>
 
-  <!-- Floating lanterns layer -->
-  <div class="lantern-layer" aria-hidden="true">
-    <div class="lantern t1" style="left:2%;"><span>🏮</span></div>
-    <div class="lantern t2" style="left:12%;"><span>🧧</span></div>
-    <div class="lantern t3" style="left:20%;"><span>🏮</span></div>
-    <div class="lantern t4" style="left:30%;"><span>🏮</span></div>
-    <div class="lantern t5" style="left:38%;"><span>🧧</span></div>
-    <div class="lantern t6" style="left:48%;"><span>🏮</span></div>
-    <div class="lantern t3 hide-sm" style="left:58%;"><span>🏮</span></div>
-    <div class="lantern t1" style="left:66%;"><span>🧧</span></div>
-    <div class="lantern t7" style="left:74%;"><span>🏮</span></div>
-    <div class="lantern t2 hide-sm" style="left:82%;"><span>🧧</span></div>
-    <div class="lantern t4" style="left:90%;"><span>🏮</span></div>
-    <div class="lantern t6 hide-sm" style="left:6%;"><span>🏮</span></div>
-    <div class="lantern t5" style="left:26%;"><span>🧧</span></div>
-    <div class="lantern t2" style="left:52%;"><span>🏮</span></div>
-    <div class="lantern t7 hide-sm" style="left:70%;"><span>🧧</span></div>
-  </div>
+  <!-- Floating lanterns container (spawned continuously by JS) -->
+  <div id="lanterns" aria-hidden="true"></div>
 
   <!-- Scaled card container (desktop uses auto-fit JS) -->
   <div class="stage">
@@ -284,18 +288,18 @@
 
             <!-- Gold frame + glow image -->
             <figure class="gold-frame">
-              <img class="gold-img glow" src="horse1.jpg" alt="Year of the Horse — festive red and gold artwork" loading="lazy" />
+              <img src="horse1.jpg" alt="Year of the Horse festive greeting" class="gold-img glow" loading="lazy" />
             </figure>
           </div>
 
           <hr class="divider" aria-hidden="true" />
 
-          <!-- Footer + Bigger Logos -->
+          <!-- Footer + Logos -->
           <p class="footer">Warm greetings from <strong>SGMM Ops Team</strong></p>
           <div class="logo-strip" aria-label="Partner logos">
-            <img src="Exxon.jpg" alt="ExxonMobil logo" height="46" />
+            <img src="Exxon.jpg" alt="ExxonMobil logo" />
             <span class="sep">×</span>
-            <img src="Maersk 1.png" alt="Maersk logo" height="46" />
+            <img src="Maersk 1.png" alt="Maersk logo" />
           </div>
 
           <!-- Fit/Actual toggle (desktop) -->
@@ -308,42 +312,30 @@
   </div>
 
 <script>
-/* Auto-fit the card on desktop so the whole thing is visible at 100% browser zoom.
-   - Computes a scale factor based on available viewport height.
-   - Keeps a small margin so it never touches the edges.
-   - Toggling turns scaling on/off. */
+/* ===== 1) Auto-fit the card on desktop (so full page visible at 100% zoom) ===== */
 (function(){
   const wrap = document.getElementById('scaleWrap');
   const card = document.getElementById('card');
   const btn  = document.getElementById('fitToggle');
   const label= document.getElementById('fitLabel');
 
-  let fitOn = true;  // default: Fit to screen
-  const marginVH = 24; // reserved top+bottom margin in px (approx); tweak if needed
+  let fitOn = true;
+  const marginPX = 24;  // top+bottom margin to breathe
 
   function applyScale(){
-    // Only auto-fit on desktop widths; mobile keeps native scroll
-    const isDesktop = window.matchMedia('(min-width: 900px)').matches;
-    if(!isDesktop || !fitOn){
+    const desktop = window.matchMedia('(min-width: 900px)').matches;
+    if(!desktop || !fitOn){
       wrap.style.transform = 'scale(1)';
-      document.body.style.overflowY = isDesktop ? 'auto' : 'auto';
+      document.body.style.overflowY = 'auto';
       return;
     }
-
-    // Measure card full height at scale = 1
-    wrap.style.transform = 'scale(1)';
+    wrap.style.transform = 'scale(1)'; // measure natural height
     const cardH = card.scrollHeight;
-
-    const viewportH = window.innerHeight;
-    // leave some margin so it breathes above/below
-    const available = Math.max(200, viewportH - marginVH);
-    let scale = available / cardH;
-
-    // Clamp reasonable bounds so it never gets silly
-    scale = Math.min(1, Math.max(0.65, scale));
-
-    wrap.style.transform = 'scale(' + scale.toFixed(4) + ')';
-    document.body.style.overflowY = 'hidden'; // no scroll when fitting
+    const avail = Math.max(200, window.innerHeight - marginPX);
+    let s = avail / cardH;
+    s = Math.min(1, Math.max(0.65, s)); // clamp
+    wrap.style.transform = 'scale(' + s.toFixed(4) + ')';
+    document.body.style.overflowY = 'hidden';
   }
 
   function toggleFit(){
@@ -353,17 +345,71 @@
     applyScale();
   }
 
-  // Toggle with button or keyboard "F"
   btn.addEventListener('click', toggleFit);
-  window.addEventListener('keydown', (e)=>{
-    if(e.key.toLowerCase()==='f'){ toggleFit(); }
+  window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='f') toggleFit(); });
+  window.addEventListener('resize', applyScale);
+  window.addEventListener('load', ()=> setTimeout(applyScale, 60));
+})();
+
+/* ===== 2) Floating lanterns: spawn smaller, continuous, non-overlapping at top ===== */
+(function(){
+  const container = document.getElementById('lanterns');
+  if(!container) return;
+
+  const EMOJI = ['🏮','🧧'];
+  const COUNT = 18;            // number of lanterns at once (tweak if you want more/less)
+  const VW = () => Math.max(360, window.innerWidth);
+
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+
+  function spawnLantern(i){
+    const el = document.createElement('div');
+    el.className = 'lantern';
+    // random horizontal position across the viewport
+    el.style.left = rand(0, 100).toFixed(2) + '%';
+    // staggered delays via negative animation-delay by starting partway
+    el.style.animationDelay = (-rand(0, 20)).toFixed(2) + 's';
+    // individual durations (slower to faster)
+    el.style.setProperty('--rise',  rand(28, 42).toFixed(2) + 's');
+    el.style.setProperty('--sway',  rand(5.0, 7.6).toFixed(2) + 's');
+    el.style.setProperty('--tw',    rand(3.2, 5.0).toFixed(2) + 's');
+
+    const inner = document.createElement('div');
+    inner.className = 'lantern__inner';
+    inner.style.animationDelay = (-rand(0, 5)).toFixed(2) + 's';
+    // subtle per-lantern scaling 0.80–1.00 (already smaller base)
+    inner.style.setProperty('--scale', rand(0.80, 1.00).toFixed(2));
+
+    const span = document.createElement('span');
+    span.textContent = EMOJI[Math.random() < 0.65 ? 0 : 1];
+    inner.appendChild(span);
+    el.appendChild(inner);
+
+    // Remove and respawn when one full rise cycle ends (keeps flow continuous)
+    const riseDur = parseFloat(getComputedStyle(el).getPropertyValue('--rise')) || 32;
+    const startDelay = Math.abs(parseFloat(el.style.animationDelay)) || 0;
+    setTimeout(()=> {
+      if(el.parentNode) container.removeChild(el);
+      spawnLantern(i); // respawn new one
+    }, (riseDur - (startDelay % riseDur)) * 1000);
+
+    container.appendChild(el);
+  }
+
+  function init(){
+    // Clear previous (if any) and (re)spawn
+    container.innerHTML = '';
+    for(let i=0;i<COUNT;i++) spawnLantern(i);
+  }
+
+  // Reinitialize on resize to re-randomize positions for new width
+  window.addEventListener('resize', ()=> {
+    // throttle: simple debounce
+    clearTimeout(init._t);
+    init._t = setTimeout(init, 250);
   });
 
-  // Recompute on resize/orientation changes
-  window.addEventListener('resize', applyScale);
-
-  // First run after fonts/layout settle
-  window.addEventListener('load', ()=> setTimeout(applyScale, 50));
+  window.addEventListener('load', ()=> setTimeout(init, 10));
 })();
 </script>
 
