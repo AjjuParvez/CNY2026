@@ -4,17 +4,17 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SGMM Ops — Happy Chinese New Year 2026</title>
-<meta name="version" content="logos-and-lantern-wallpaper" />
+<meta name="version" content="bigger-text-img-logos-2026-02-16" />
 
 <style>
-  /* ---------- Base ---------- */
+  /* ---------- Base & easy tuning ---------- */
   :root{
     --card-bg: rgba(255,255,255,0.92);
     --card-border: #b30000;
     --page-bg:
       radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0) 60%),
       radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0) 60%),
-      #190a06; /* deep festive night */
+      #190a06;
     --text-1: #5b3600;
     --text-2: #7a3d00;
     --accent: #b30000;
@@ -27,9 +27,11 @@
     --gold-4: #a77000;
     --glow:   rgba(255, 204, 64, .35);
 
-    /* Desktop scaling to emulate ~80% zoom feel (tweak if needed) */
-    --desktop-scale: 0.82;  /* try 0.80–0.86 to taste */
-    --desktop-top-gap: 20px;
+    /* DESKTOP tuning (increase to make larger) */
+    --desktop-scale: 0.88;   /* overall card scale on desktop; try 0.86–0.92 */
+    --desktop-top-gap: 18px; /* space above the scaled card */
+    --imgMaxVH: 58vh;        /* max image height vs viewport; higher = bigger image */
+    --logoH-desktop: 46px;   /* desktop logo height */
   }
 
   html, body {
@@ -42,14 +44,13 @@
     overflow-x: hidden;
   }
 
-  /* ---------- Lantern wallpaper (subtle repeating background) ---------- */
-  /* A tiny inline SVG lantern is tiled across the page at low opacity. */
+  /* ---------- Lantern wallpaper (subtle repeating) ---------- */
   .lantern-wallpaper{
     position: fixed;
     inset: 0;
-    z-index: 0;               /* behind everything */
+    z-index: 0;
     pointer-events: none;
-    opacity: .10;             /* overall subtlety */
+    opacity: .12; /* overall pattern strength */
     background-image: url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='80' height='120' viewBox='0 0 80 120'>\
   <defs>\
@@ -66,86 +67,59 @@
       <feGaussianBlur stdDeviation='0.6'/>\
     </filter>\
   </defs>\
-  <!-- lantern body -->\
   <ellipse cx='40' cy='52' rx='20' ry='26' fill='url(%23g)' stroke='%23b30000' stroke-width='2'/>\
-  <!-- top/bottom caps -->\
   <rect x='26' y='28' width='28' height='6' rx='3' fill='url(%23gold)'/>\
   <rect x='26' y='72' width='28' height='6' rx='3' fill='url(%23gold)'/>\
-  <!-- tassel -->\
   <rect x='38' y='78' width='4' height='14' fill='url(%23gold)'/>\
   <circle cx='40' cy='96' r='4' fill='%23ffcc66' filter='url(%23blur)'/>\
 </svg>");
-    background-size: 90px 140px;    /* size of each tile */
+    background-size: 90px 140px;
     background-repeat: repeat;
     background-position: 0 0;
   }
 
-  /* ---------- Floating Lanterns Layer (animated) ---------- */
+  /* ---------- Floating lanterns (animated) ---------- */
   .lantern-layer{
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    z-index: 1;               /* above wallpaper, behind card */
-    pointer-events: none;
+    position: fixed; inset: 0; overflow: hidden;
+    z-index: 1; pointer-events: none;
   }
   .lantern{
-    position: absolute;
-    width: 40px; height: 60px;
+    position: absolute; width: 40px; height: 60px;
     display: grid; place-items: center;
     filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
-    backface-visibility: hidden;
-    will-change: transform, filter;
+    backface-visibility: hidden; will-change: transform, filter;
     animation: rise linear infinite, sway ease-in-out infinite, twinkle ease-in-out infinite;
   }
   .lantern span{ font-size: 38px; line-height: 1; }
 
-  @keyframes rise {
-    0%   { transform: translate3d(0,110vh,0); opacity: 0; }
-    8%   { opacity: 1; }
-    100% { transform: translate3d(0,-20vh,0); opacity: .95; }
-  }
-  @keyframes sway {
-    0%   { transform: translate3d(0,0,0); }
-    50%  { transform: translate3d(18px,0,0); }
-    100% { transform: translate3d(0,0,0); }
-  }
-  @keyframes twinkle {
-    0%,100% { filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)) brightness(1); }
-    50%     { filter: drop-shadow(0 6px 12px rgba(0,0,0,.5)) brightness(1.15); }
-  }
-  .t1{ animation-duration: 26s, 5.5s, 3.8s; animation-delay: 0s, 0s, 0s;}
-  .t2{ animation-duration: 30s, 6.2s, 4.4s; animation-delay: 4s, .4s, .8s;}
-  .t3{ animation-duration: 34s, 6.8s, 3.6s; animation-delay: 8s, .2s, 1.2s;}
-  .t4{ animation-duration: 28s, 5.8s, 4.0s; animation-delay: 2s, .1s, 0s;}
-  .t5{ animation-duration: 36s, 7.2s, 3.2s; animation-delay: 10s, .6s, .3s;}
-  .t6{ animation-duration: 32s, 6.4s, 4.6s; animation-delay: 6s, .3s, .9s;}
-  .t7{ animation-duration: 40s, 7.8s, 3.9s; animation-delay: 12s, .8s, .5s;}
+  @keyframes rise { 0%{transform:translate3d(0,110vh,0);opacity:0} 8%{opacity:1} 100%{transform:translate3d(0,-20vh,0);opacity:.95} }
+  @keyframes sway { 0%{transform:translate3d(0,0,0)} 50%{transform:translate3d(18px,0,0)} 100%{transform:translate3d(0,0,0)} }
+  @keyframes twinkle { 0%,100%{filter:drop-shadow(0 6px 10px rgba(0,0,0,.45)) brightness(1)} 50%{filter:drop-shadow(0 6px 12px rgba(0,0,0,.5)) brightness(1.15)} }
+  .t1{ animation-duration: 26s,5.5s,3.8s }
+  .t2{ animation-duration: 30s,6.2s,4.4s; animation-delay: 4s,.4s,.8s }
+  .t3{ animation-duration: 34s,6.8s,3.6s; animation-delay: 8s,.2s,1.2s }
+  .t4{ animation-duration: 28s,5.8s,4.0s; animation-delay: 2s,.1s,0s }
+  .t5{ animation-duration: 36s,7.2s,3.2s; animation-delay: 10s,.6s,.3s }
+  .t6{ animation-duration: 32s,6.4s,4.6s; animation-delay: 6s,.3s,.9s }
+  .t7{ animation-duration: 40s,7.8s,3.9s; animation-delay: 12s,.8s,.5s }
 
-  /* ---------- Stage (center/scales card on desktop) ---------- */
+  /* ---------- Stage (centers card; scales on desktop) ---------- */
   .stage{
-    min-height: 100vh;
-    display: grid;
-    place-items: start center;
-    padding: 40px 16px;        /* mobile padding */
-    position: relative;
-    z-index: 2;                /* above floating lanterns */
+    min-height: 100vh; display: grid; place-items: start center;
+    padding: 40px 16px; position: relative; z-index: 2;
   }
   @media (min-width: 900px){
-    body{ overflow-y: hidden; } /* lock scroll on desktop */
+    body{ overflow-y: hidden; } /* no scroll on desktop */
     .stage{ padding: 0 16px; }
   }
-
   .desk-scale{ transform-origin: top center; }
   @media (min-width: 900px){
-    .desk-scale{
-      margin-top: var(--desktop-top-gap);
-      transform: scale(var(--desktop-scale));
-    }
+    .desk-scale{ margin-top: var(--desktop-top-gap); transform: scale(var(--desktop-scale)); }
   }
 
   /* ---------- Card ---------- */
   .card{
-    width: min(860px, calc(100vw - 32px));
+    width: min(900px, calc(100vw - 32px)); /* slightly wider max for a larger look */
     background: var(--card-bg);
     border: 2px solid var(--card-border);
     border-radius: 16px;
@@ -155,116 +129,98 @@
 
   .card__header{
     background: linear-gradient(135deg, #990000 0%, #b30000 60%, #cc0000 100%);
-    padding: 22px 20px;
-    text-align: center;
-    color: var(--accent-2);
+    padding: 26px 22px; text-align: center; color: var(--accent-2);
   }
+  /* Bigger headings */
   .card__header h1{
-    margin:0; letter-spacing:.5px;
-    font-size: clamp(26px, 3.2vw, 38px);
+    margin:0; letter-spacing:.6px;
+    font-weight: 800;
+    font-size: clamp(28px, 3.6vw, 44px);
   }
   .card__header p{
-    margin:6px 0 0 0; color:#ffedc9;
-    font-size: clamp(14px, 1.6vw, 18px);
+    margin:8px 0 0 0; color:#ffedc9;
+    font-size: clamp(15px, 1.8vw, 22px);
   }
 
-  .card__body{ padding: 22px 24px 8px 24px; text-align:center; }
+  .card__body{ padding: 28px 28px 10px 28px; text-align:center; }
   .msg{
-    font-size: clamp(16px, 1.6vw, 19px);
-    color:var(--text-1); line-height:1.7; margin:0 0 14px 0;
+    font-size: clamp(17px, 1.8vw, 22px);
+    color:var(--text-1); line-height:1.75; margin:0 0 18px 0;
   }
 
   .msg-box{
-    margin: 12px auto 4px; max-width: 720px;
+    margin: 16px auto 8px; max-width: 780px; /* wider for larger image */
     border: 2px solid var(--card-border); border-radius: 12px;
-    background: #fff8ee; padding: 14px;
+    background: #fff8ee; padding: 18px;
   }
   .msg-box .lead{
-    font-size: clamp(15px, 1.5vw, 17px);
-    color:#6a3d00; margin-bottom:10px;
+    font-size: clamp(16px, 1.7vw, 20px);
+    color:#6a3d00; margin-bottom:14px; font-weight: 700;
   }
 
-  /* ---------- GOLD FRAME + GLOW for the main image ---------- */
+  /* ---------- GOLD FRAME + GLOW ---------- */
   .gold-frame{
-    position: relative;
-    border-radius: 14px;
-    padding: 10px; /* frame thickness */
+    position: relative; border-radius: 14px; padding: 10px;
     background: linear-gradient(145deg, var(--gold-4), var(--gold-2), var(--gold-1), var(--gold-3));
-    box-shadow:
-      0 0 0 1px rgba(0,0,0,.05) inset,
-      0 14px 28px rgba(0,0,0,.18),
-      0 0 22px 4px var(--glow);
+    box-shadow: 0 0 0 1px rgba(0,0,0,.05) inset, 0 14px 28px rgba(0,0,0,.18), 0 0 22px 4px var(--glow);
     transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
   }
   .gold-frame::before{
-    content:"";
-    position: absolute; inset: 4px; border-radius: 10px; pointer-events: none;
+    content:""; position: absolute; inset: 4px; border-radius: 10px; pointer-events:none;
     background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 40%, rgba(0,0,0,.06));
     mix-blend-mode: screen;
   }
-  .gold-frame:hover,
-  .gold-frame:focus-within{
+  .gold-frame:hover, .gold-frame:focus-within{
     transform: translateY(-2px);
-    box-shadow:
-      0 0 0 1px rgba(0,0,0,.05) inset,
-      0 18px 34px rgba(0,0,0,.22),
-      0 0 32px 8px rgba(255, 210, 95, .55);
+    box-shadow: 0 0 0 1px rgba(0,0,0,.05) inset, 0 18px 34px rgba(0,0,0,.22), 0 0 32px 8px rgba(255,210,95,.55);
     filter: saturate(1.06);
   }
   .gold-img{
     display:block; width: 100%; height: auto; border-radius: 10px;
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.35),
-      inset 0 0 24px rgba(255, 240, 140, .35);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), inset 0 0 24px rgba(255,240,140,.35);
   }
-  @keyframes shimmer {
-    0%   { box-shadow: inset 0 0 24px rgba(255,240,140,.30); }
-    50%  { box-shadow: inset 0 0 36px rgba(255,240,160,.45); }
-    100% { box-shadow: inset 0 0 24px rgba(255,240,140,.30); }
-  }
+
+  @keyframes shimmer { 0%{box-shadow:inset 0 0 24px rgba(255,240,140,.30)} 50%{box-shadow:inset 0 0 36px rgba(255,240,160,.45)} 100%{box-shadow:inset 0 0 24px rgba(255,240,140,.30)} }
   .gold-img.glow { animation: shimmer 4.2s ease-in-out infinite; }
 
-  .divider{ border:0; border-top:2px solid var(--card-border); margin:16px auto; width:84%; }
+  /* Desktop: let the picture get taller (but still fit the screen overall because of scaling) */
+  @media (min-width: 900px){
+    .gold-img{ max-height: var(--imgMaxVH); width: auto; max-width: 100%; object-fit: contain; }
+  }
+
+  .divider{ border:0; border-top:2px solid var(--card-border); margin:18px auto; width:86%; }
 
   .footer{
     text-align:center; padding:0; color:var(--text-2);
-    font-size: clamp(14px, 1.4vw, 16px);
+    font-size: clamp(15px, 1.6vw, 18px);
   }
 
-  /* ---------- Logo strip under "Warm greetings" ---------- */
+  /* ---------- Logo strip (bigger logos) ---------- */
   .logo-strip{
-    margin: 10px auto 18px;
-    display: inline-flex;
-    align-items: center;
-    gap: 18px;
-    background: rgba(255,255,255,.65);
-    border: 1px solid rgba(179,0,0,.25);
-    border-radius: 10px;
-    padding: 8px 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    margin: 12px auto 22px;
+    display: inline-flex; align-items: center; gap: 22px;
+    background: rgba(255,255,255,.70);
+    border: 1px solid rgba(179,0,0,.28);
+    border-radius: 12px; padding: 10px 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.10);
   }
   .logo-strip img{
-    display:block;
-    height: 30px;          /* mobile/base */
-    width: auto;
-    object-fit: contain;
+    display:block; height: 34px; width: auto; object-fit: contain;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,.12));
   }
-  .logo-strip .sep{
-    color:#a64500; font-weight:700; opacity:.6;
-  }
+  .logo-strip .sep{ color:#a64500; font-weight:700; opacity:.65; }
   @media (min-width: 900px){
-    .logo-strip img{ height: 38px; } /* slightly larger on desktop */
+    .logo-strip img{ height: var(--logoH-desktop); } /* bigger on desktop */
   }
 
   /* ---------- Mobile tweaks ---------- */
   @media (max-width: 520px){
-    .lantern{ width: 34px; height: 50px; }
-    .lantern span{ font-size: 32px; }
+    .lantern{ width:34px; height:50px; }
+    .lantern span{ font-size:32px; }
     .hide-sm{ display:none; }
   }
 
-  /* ---------- Respect user “Reduce Motion” ---------- */
+  /* ---------- Reduce Motion ---------- */
   @media (prefers-reduced-motion: reduce){
     .lantern{ animation: none !important; }
     .gold-img.glow{ animation: none !important; }
@@ -295,7 +251,7 @@
     <div class="lantern t7 hide-sm" style="left:70%;"><span>🧧</span></div>
   </div>
 
-  <!-- Scaled card container (desktop only scaling) -->
+  <!-- Scaled card container (desktop scaling) -->
   <div class="stage">
     <div class="desk-scale">
       <article class="card" role="main" aria-label="Chinese New Year greetings from SGMM Ops">
@@ -315,13 +271,13 @@
 
             <!-- Gold frame + glow image -->
             <figure class="gold-frame">
-              <img src="horse1.jpg" alt="Year of the Horse festive greeting artwork" class="gold-img glow" loading="lazy" />
+              <img class="gold-img glow" src="horse1.jpg" alt="Year of the Horse festive red and gold illustration" loading="lazy" />
             </figure>
           </div>
 
           <hr class="divider" aria-hidden="true" />
 
-          <!-- Footer + Logos -->
+          <!-- Footer + Bigger Logos -->
           <p class="footer">Warm greetings from <strong>SGMM Ops Team</strong></p>
           <div class="logo-strip" aria-label="Partner logos">
             <img src="Exxon.jpg" alt="ExxonMobil logo" />
