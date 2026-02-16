@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SGMM Ops — Happy Chinese New Year 2026</title>
+<style>
+  /* ---------- Base ---------- */
+  :root{
+    --card-bg: rgba(255,255,255,0.92);
+    --card-border: #b30000;
+    --page-bg: radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%) ,
+                radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%) ,
+                #190a06; /* deep festive night */
+    --text-1: #5b3600;
+    --text-2: #7a3d00;
+    --accent: #b30000;
+    --accent-2: #ffd27f;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--page-bg);
+    color: var(--text-1);
+    min-height: 100vh;                /* NEW: ensure full viewport height */
+  }
+
+  /* ---------- Floating Lanterns Layer ---------- */
+  .lantern-layer{
+    position: fixed;
+    inset: 0;
+    overflow: hidden;         /* clip animation overflow */
+    z-index: 0;               /* behind card */
+    pointer-events: none;     /* let clicks go through */
+  }
+
+  /* A single lantern */
+  .lantern{
+    position: absolute;
+    width: 40px; height: 60px;        /* NEW: slightly smaller for mobile perf */
+    display: grid;
+    place-items: center;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
+    backface-visibility: hidden;      /* NEW: avoid paint artifacts on mobile */
+    will-change: transform, filter;   /* NEW: hint GPU */
+    /* subtle twinkle */
+    animation: rise linear infinite, sway ease-in-out infinite, twinkle ease-in-out infinite;
+  }
+  .lantern span{ font-size: 38px; line-height: 1; } /* 🏮/🧧 (NEW: slightly smaller) */
+
+  /* Keyframes: use translate3d for GPU acceleration */
+  @keyframes rise {
+    0%   { transform: translate3d(0,110vh,0); opacity: 0; }
+    8%   { opacity: 1; }
+    100% { transform: translate3d(0,-20vh,0); opacity: .95; }
+  }
+  @keyframes sway {
+    0%   { transform: translate3d(0,0,0); }
+    50%  { transform: translate3d(18px,0,0); }
+    100% { transform: translate3d(0,0,0); }
+  }
+  @keyframes twinkle {
+    0%,100% { filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)) brightness(1); }
+    50%     { filter: drop-shadow(0 6px 12px rgba(0,0,0,.5)) brightness(1.15); }
+  }
+
+  /* Different speeds & delays for variety */
+  .t1{ animation-duration: 26s, 5.5s, 3.8s; animation-delay: 0s, 0s, 0s;}
+  .t2{ animation-duration: 30s, 6.2s, 4.4s; animation-delay: 4s, .4s, .8s;}
+  .t3{ animation-duration: 34s, 6.8s, 3.6s; animation-delay: 8s, .2s, 1.2s;}
+  .t4{ animation-duration: 28s, 5.8s, 4.0s; animation-delay: 2s, .1s, 0s;}
+  .t5{ animation-duration: 36s, 7.2s, 3.2s; animation-delay: 10s, .6s, .3s;}
+  .t6{ animation-duration: 32s, 6.4s, 4.6s; animation-delay: 6s, .3s, .9s;}
+  .t7{ animation-duration: 40s, 7.8s, 3.9s; animation-delay: 12s, .8s, .5s;}
+
+  /* ---------- Layout: Greeting Card ---------- */
+  .wrap{
+    position: relative;
+    z-index: 1;  /* above lanterns */
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 40px 16px;
+  }
+  .card{
+    max-width: 860px; width: 100%;
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    overflow: hidden;
+  }
+  .card__header{
+    background: linear-gradient(135deg, #990000 0%, #b30000 60%, #cc0000 100%);
+    padding: 26px 22px; text-align: center; color: var(--accent-2);
+  }
+  .card__header h1{ margin:0; font-size:34px; letter-spacing:.5px; }
+  .card__header p{ margin:6px 0 0 0; color:#ffedc9; font-size:18px; }
+
+  .card__body{ padding: 26px 28px 8px 28px; text-align:center; }
+  .msg{ font-size:20px; color:var(--text-1); line-height:1.7; margin:0 0 18px 0; }
+
+  .msg-box{
+    margin: 14px auto 6px; max-width: 720px;
+    border: 2px solid var(--card-border); border-radius: 12px;
+    background: #fff8ee; padding: 18px;
+  }
+  .msg-box .lead{ font-size:18px; color:#6a3d00; margin-bottom:12px; }
+  .msg-box img{
+    max-width: 100%; height: auto; border-radius:10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  }
+
+  .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
+  .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); }
+
+  /* ---------- Mobile performance tweaks ---------- */
+  @media (max-width: 520px){
+    .card__header h1{ font-size: 28px; }
+    .msg{ font-size: 18px; }
+    .lantern{ width: 34px; height: 50px; } /* NEW: smaller on small screens */
+    .lantern span{ font-size: 32px; }
+    /* NEW: fewer lanterns on small devices (hide some by class) */
+    .hide-sm{ display:none; }
+  }
+
+  /* ---------- Respect user “Reduce Motion” ---------- */
+  @media (prefers-reduced-motion: reduce){
+    .lantern{ animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Floating lantern background layer -->
+  <div class="lantern-layer" aria-hidden="true">
+    <div class="lantern t1" style="left:2%;"><span>🏮</span></div>
+    <div class="lantern t2" style="left:12%;"><span>🧧</span></div>
+    <div class="lantern t3" style="left:20%;"><span>🏮</span></div>
+    <div class="lantern t4" style="left:30%;"><span>🏮</span></div>
+    <div class="lantern t5" style="left:38%;"><span>🧧</span></div>
+    <div class="lantern t6" style="left:48%;"><span>🏮</span></div>
+    <div class="lantern t3 hide-sm" style="left:58%;"><span>🏮</span></div>  <!-- NEW: hidden on small -->
+    <div class="lantern t1" style="left:66%;"><span>🧧</span></div>
+    <div class="lantern t7" style="left:74%;"><span>🏮</span></div>
+    <div class="lantern t2 hide-sm" style="left:82%;"><span>🧧</span></div>  <!-- NEW: hidden on small -->
+    <div class="lantern t4" style="left:90%;"><span>🏮</span></div>
+    <div class="lantern t6 hide-sm" style="left:6%;"><span>🏮</span></div>  <!-- NEW: hidden on small -->
+    <div class="lantern t5" style="left:26%;"><span>🧧</span></div>
+    <div class="lantern t2" style="left:52%;"><span>🏮</span></div>
+    <div class="lantern t7 hide-sm" style="left:70%;"><span>🧧</span></div>  <!-- NEW: hidden on small -->
+  </div>
+
+  <!-- Foreground greeting card -->
+  <div class="wrap">
+    <article class="card" role="main" aria-label="Chinese New Year greetings from SGMM Ops">
+      <header class="card__header">
+        <h1>Happy Chinese New Year 2026</h1>
+        <p>恭喜发财 · Gong Xi Fa Cai</p>
+      </header>
+
+      <section class="card__body">
+        <p class="msg">
+          Wishing you prosperity, good health, and joy in the
+          <strong>Year of the Horse</strong>.
+        </p>
+
+        <!-- Message box WITH the animated GIF inside -->
+        <div class="msg-box">
+          <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
+
+          <!-- ✅ Direct animated GIF (horse-themed) -->
+          <img
+            src=https://bestanimations.com/uploads/gifs/1741924090beautiful-happy-lunar-new-year-2026-animated-gif.gif.pagespeed.ce.xc-ynuVQ4j.gif
+            alt="Happy Lunar New Year 2026 – Year of the Horse animated greeting with fireworks" />
+        </div>
+
+        <hr class="divider" aria-hidden="true" />
+        <p class="footer">Warm greetings from <strong>SGMM Ops Team</strong></p>
+      </section>
+    </article>
+  </div>
+
+</body>
+</html>
