@@ -10,8 +10,8 @@
   :root{
     --card-bg: rgba(255,255,255,0.92);
     --card-border: #b30000;
-    --page-bg: radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%),
-                radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%),
+    --page-bg: radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%) ,
+                radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%) ,
                 #190a06; /* deep festive night */
     --text-1: #5b3600;
     --text-2: #7a3d00;
@@ -24,6 +24,10 @@
     --gold-3: #ffea9f;   /* highlight */
     --gold-4: #a77000;   /* deep edge */
     --glow:   rgba(255, 204, 64, .35);
+
+    /* Desktop-only variables */
+    --desktop-scale: 0.85;  /* ← looks like ~80% zoom; tweak 0.82–0.90 if needed */
+    --desktop-top-gap: 28px;/* breathing space above scaled card */
   }
 
   html, body {
@@ -78,16 +82,36 @@
   .t6{ animation-duration: 32s, 6.4s, 4.6s; animation-delay: 6s, .3s, .9s;}
   .t7{ animation-duration: 40s, 7.8s, 3.9s; animation-delay: 12s, .8s, .5s;}
 
-  /* ---------- Layout: Greeting Card ---------- */
-  .wrap{
-    position: relative;
-    z-index: 1; /* above lanterns */
-    min-height: 100%;
+  /* ---------- Layout: outer wrapper (centers the scaled card) ---------- */
+  .stage{
+    min-height: 100vh;
     display: grid;
-    place-items: center;
-    padding: 40px 16px; /* mobile-first */
+    place-items: start center; /* top-center on desktop; centered on mobile by .wrap */
+    padding: 40px 16px;        /* base padding for mobile */
   }
 
+  /* On desktop we disable page scrolling and handle it via scale */
+  @media (min-width: 900px){
+    body{ overflow-y: hidden; }
+    .stage{
+      padding: 0 16px;
+      align-content: start;
+    }
+  }
+
+  /* ---------- The scaled container on desktop ---------- */
+  .desk-scale{
+    /* mobile: no scaling */
+    transform-origin: top center;
+  }
+  @media (min-width: 900px){
+    .desk-scale{
+      margin-top: var(--desktop-top-gap);
+      transform: scale(var(--desktop-scale));
+    }
+  }
+
+  /* ---------- Card ---------- */
   .card{
     width: min(860px, calc(100vw - 32px));
     background: var(--card-bg);
@@ -95,6 +119,8 @@
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,.35);
     overflow: hidden;
+    position: relative;
+    z-index: 1;
   }
 
   .card__header{
@@ -181,35 +207,7 @@
   .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
   .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
 
-  /* ---------- DESKTOP: force one‑page fit ---------- */
-  @media (min-width: 900px){
-    /* Compact spacing */
-    .wrap{ padding: 20px 12px; min-height: 100vh; }
-    .card{
-      display: flex; flex-direction: column;
-      max-height: 96vh; /* fits inside the screen */
-    }
-    .card__header{ padding: 16px 16px; }
-    .card__header h1{ font-size: clamp(24px, 2.6vw, 34px); }
-    .card__header p{ font-size: clamp(12px, 1.2vw, 16px); }
-
-    .card__body{ padding: 14px 18px 6px 18px; }
-    .msg{ margin: 6px 0 12px; font-size: clamp(15px, 1.2vw, 18px); }
-    .msg-box{ padding: 12px; margin: 10px auto 4px; }
-    .divider{ margin: 12px auto; }
-    .footer{ padding-bottom: 12px; }
-
-    /* Image sizing so the whole card fits */
-    :root{ --imgMaxVH: 54vh; } /* ↓ If you still see scroll: try 52vh or 50vh */
-    .gold-img{
-      max-height: var(--imgMaxVH);
-      width: auto;
-      max-width: 100%;
-      object-fit: contain;
-    }
-  }
-
-  /* ---------- Mobile performance tweaks ---------- */
+  /* ---------- Mobile tweaks ---------- */
   @media (max-width: 520px){
     .lantern{ width: 34px; height: 50px; }
     .lantern span{ font-size: 32px; }
@@ -244,39 +242,35 @@
     <div class="lantern t7 hide-sm" style="left:70%;"><span>🧧</span></div>
   </div>
 
-  <!-- Foreground greeting card -->
-  <div class="wrap">
-    <article class="card" role="main" aria-label="Chinese New Year greetings from SGMM Ops">
-      <header class="card__header">
-        <h1>Happy Chinese New Year 2026</h1>
-        <p>恭喜发财 · Gong Xi Fa Cai</p>
-      </header>
+  <!-- Foreground greeting card (scaled on desktop) -->
+  <div class="stage">
+    <div class="desk-scale">
+      <article class="card" role="main" aria-label="Chinese New Year greetings from SGMM Ops">
+        <header class="card__header">
+          <h1>Happy Chinese New Year 2026</h1>
+          <p>恭喜发财 · Gong Xi Fa Cai</p>
+        </header>
 
-      <section class="card__body">
-        <p class="msg">
-          Wishing you prosperity, good health, and joy in the
-          <strong>Year of the Horse</strong>.
-        </p>
+        <section class="card__body">
+          <p class="msg">
+            Wishing you prosperity, good health, and joy in the
+            <strong>Year of the Horse</strong>.
+          </p>
 
-        <div class="msg-box">
-          <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
+          <div class="msg-box">
+            <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
 
-          <!-- Gold frame + glow image -->
-          <figure class="gold-frame">
-            <img
-              src="horse1.jpg"
-              alt="Chinese New Year 2026 red-and-gold horse illustration"
-              class="gold-img glow"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
-        </div>
+            <!-- Gold frame + glow image -->
+            <figure class="gold-frame">
+              <img src="horse1.jpg" alt="Golden horse New Year illustration" class="gold-img glow" loading="lazy" />
+            </figure>
+          </div>
 
-        <hr class="divider" aria-hidden="true" />
-        <p class="footer">Warm greetings from <strong>SGMM Ops Team</strong></p>
-      </section>
-    </article>
+          <hr class="divider" aria-hidden="true" />
+          <p class="footer">Warm greetings from <strong>SGMM Ops Team</strong></p>
+        </section>
+      </article>
+    </div>
   </div>
 
 </body>
