@@ -4,30 +4,32 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SGMM Ops — Happy Chinese New Year 2026</title>
+<meta name="version" content="fit-desktop-scale-0.80" />
 
 <style>
   /* ---------- Base ---------- */
   :root{
     --card-bg: rgba(255,255,255,0.92);
     --card-border: #b30000;
-    --page-bg: radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%) ,
-                radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%) ,
-                #190a06; /* deep festive night */
+    --page-bg:
+      radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%),
+      radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%),
+      #190a06;
     --text-1: #5b3600;
     --text-2: #7a3d00;
     --accent: #b30000;
     --accent-2: #ffd27f;
 
     /* Gold + glow */
-    --gold-1: #b8860b;   /* dark gold */
-    --gold-2: #ffd27f;   /* light gold */
-    --gold-3: #ffea9f;   /* highlight */
-    --gold-4: #a77000;   /* deep edge */
+    --gold-1: #b8860b;
+    --gold-2: #ffd27f;
+    --gold-3: #ffea9f;
+    --gold-4: #a77000;
     --glow:   rgba(255, 204, 64, .35);
 
-    /* Desktop-only variables */
-    --desktop-scale: 0.85;  /* ← looks like ~80% zoom; tweak 0.82–0.90 if needed */
-    --desktop-top-gap: 28px;/* breathing space above scaled card */
+    /* Desktop scaling to emulate 80% zoom */
+    --desktop-scale: 0.80;  /* ↓ If still scrolls, try 0.78 or 0.76 */
+    --desktop-top-gap: 18px;
   }
 
   html, body {
@@ -82,26 +84,23 @@
   .t6{ animation-duration: 32s, 6.4s, 4.6s; animation-delay: 6s, .3s, .9s;}
   .t7{ animation-duration: 40s, 7.8s, 3.9s; animation-delay: 12s, .8s, .5s;}
 
-  /* ---------- Layout: outer wrapper (centers the scaled card) ---------- */
+  /* ---------- Stage (centers the scaled card) ---------- */
   .stage{
     min-height: 100vh;
     display: grid;
-    place-items: start center; /* top-center on desktop; centered on mobile by .wrap */
-    padding: 40px 16px;        /* base padding for mobile */
+    place-items: start center;
+    padding: 40px 16px; /* mobile padding */
+    position: relative;
+    z-index: 1;
   }
 
-  /* On desktop we disable page scrolling and handle it via scale */
+  /* Desktop: lock page scroll & scale card */
   @media (min-width: 900px){
     body{ overflow-y: hidden; }
-    .stage{
-      padding: 0 16px;
-      align-content: start;
-    }
+    .stage{ padding: 0 16px; }
   }
 
-  /* ---------- The scaled container on desktop ---------- */
   .desk-scale{
-    /* mobile: no scaling */
     transform-origin: top center;
   }
   @media (min-width: 900px){
@@ -119,42 +118,40 @@
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,.35);
     overflow: hidden;
-    position: relative;
-    z-index: 1;
   }
 
   .card__header{
     background: linear-gradient(135deg, #990000 0%, #b30000 60%, #cc0000 100%);
-    padding: 26px 22px;
+    padding: 22px 20px;
     text-align: center;
     color: var(--accent-2);
   }
   .card__header h1{
     margin:0;
     letter-spacing:.5px;
-    font-size: clamp(26px, 3.2vw, 40px);
+    font-size: clamp(26px, 3.2vw, 38px);
   }
   .card__header p{
     margin:6px 0 0 0;
     color:#ffedc9;
-    font-size: clamp(14px, 1.6vw, 20px);
+    font-size: clamp(14px, 1.6vw, 18px);
   }
 
-  .card__body{ padding: 26px 28px 8px 28px; text-align:center; }
+  .card__body{ padding: 22px 24px 8px 24px; text-align:center; }
   .msg{
-    font-size: clamp(16px, 1.6vw, 20px);
+    font-size: clamp(16px, 1.6vw, 19px);
     color:var(--text-1);
-    line-height:1.7; margin:0 0 18px 0;
+    line-height:1.7; margin:0 0 14px 0;
   }
 
   .msg-box{
-    margin: 14px auto 6px; max-width: 720px;
+    margin: 12px auto 4px; max-width: 720px;
     border: 2px solid var(--card-border); border-radius: 12px;
-    background: #fff8ee; padding: 18px;
+    background: #fff8ee; padding: 14px;
   }
   .msg-box .lead{
-    font-size: clamp(15px, 1.5vw, 18px);
-    color:#6a3d00; margin-bottom:12px;
+    font-size: clamp(15px, 1.5vw, 17px);
+    color:#6a3d00; margin-bottom:10px;
   }
 
   /* ---------- GOLD FRAME + GLOW ---------- */
@@ -204,10 +201,10 @@
   }
   .gold-img.glow { animation: shimmer 4.2s ease-in-out infinite; }
 
-  .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
-  .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
+  .divider{ border:0; border-top:2px solid var(--card-border); margin:16px auto; width:84%; }
+  .footer{ text-align:center; padding:0 0 18px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
 
-  /* ---------- Mobile tweaks ---------- */
+  /* ---------- Mobile tweaks (unchanged) ---------- */
   @media (max-width: 520px){
     .lantern{ width: 34px; height: 50px; }
     .lantern span{ font-size: 32px; }
@@ -242,7 +239,7 @@
     <div class="lantern t7 hide-sm" style="left:70%;"><span>🧧</span></div>
   </div>
 
-  <!-- Foreground greeting card (scaled on desktop) -->
+  <!-- Scaled card container (desktop only scaling) -->
   <div class="stage">
     <div class="desk-scale">
       <article class="card" role="main" aria-label="Chinese New Year greetings from SGMM Ops">
@@ -262,7 +259,13 @@
 
             <!-- Gold frame + glow image -->
             <figure class="gold-frame">
-              <img src="horse1.jpg" alt="Golden horse New Year illustration" class="gold-img glow" loading="lazy" />
+              <img
+                src="horse1.jpg"
+                alt="Year of the Horse 2026 — festive red-and-gold horse illustration"
+                class="gold-img glow"
+                loading="lazy"
+                decoding="async"
+              />
             </figure>
           </div>
 
