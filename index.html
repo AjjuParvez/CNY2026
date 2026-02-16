@@ -17,6 +17,13 @@
     --text-2: #7a3d00;
     --accent: #b30000;
     --accent-2: #ffd27f;
+
+    /* Gold + glow */
+    --gold-1: #b8860b;   /* dark gold */
+    --gold-2: #ffd27f;   /* light gold */
+    --gold-3: #ffea9f;   /* highlight */
+    --gold-4: #a77000;   /* deep edge */
+    --glow:   rgba(255, 204, 64, .35);
   }
 
   html, body {
@@ -126,20 +133,60 @@
     font-size: clamp(15px, 1.5vw, 18px);
     color:#6a3d00; margin-bottom:12px;
   }
-  .msg-box img{
-    max-width: 100%;
-    height: auto;
-    border-radius:10px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.12);
-    display: block; margin: 0 auto;
+
+  /* ---------- GOLD FRAME + GLOW for the image ---------- */
+  .gold-frame{
+    position: relative;
+    border-radius: 14px;
+    padding: 10px; /* space for the visible frame around the picture */
+    /* Metallic gold ring using gradient */
+    background: linear-gradient(145deg, var(--gold-4), var(--gold-2), var(--gold-1), var(--gold-3));
+    /* Ambient outer glow */
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.05) inset,
+      0 14px 28px rgba(0,0,0,.18),
+      0 0 22px 4px var(--glow);
+    transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
+  }
+  .gold-frame::before{
+    /* inner bevel shine */
+    content:"";
+    position: absolute; inset: 4px;
+    border-radius: 10px;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 40%, rgba(0,0,0,.06));
+    mix-blend-mode: screen;
+  }
+  .gold-frame:hover,
+  .gold-frame:focus-within{
+    transform: translateY(-2px);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.05) inset,
+      0 18px 34px rgba(0,0,0,.22),
+      0 0 32px 8px rgba(255, 210, 95, .55);
+    filter: saturate(1.06);
   }
 
-  .credit{
-    font-size: 12px;
-    color: #8a5a2a;
-    margin-top: 6px;
+  .gold-img{
+    display:block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    /* Inner glow and subtle edge */
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.35),
+      inset 0 0 24px rgba(255, 240, 140, .35);
   }
-  .credit a{ color:#8a5a2a; text-decoration: underline; }
+
+  /* Gentle shimmering glow animation (optional, subtle) */
+  @keyframes shimmer {
+    0%   { box-shadow: 0 0 0 1px rgba(255,255,255,.35), inset 0 0 24px rgba(255,240,140,.30); }
+    50%  { box-shadow: 0 0 0 1px rgba(255,255,255,.45), inset 0 0 36px rgba(255,240,160,.45); }
+    100% { box-shadow: 0 0 0 1px rgba(255,255,255,.35), inset 0 0 24px rgba(255,240,140,.30); }
+  }
+  .gold-img.glow {
+    animation: shimmer 4.2s ease-in-out infinite;
+  }
 
   .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
   .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
@@ -154,6 +201,7 @@
   /* ---------- Reduce Motion ---------- */
   @media (prefers-reduced-motion: reduce){
     .lantern{ animation: none !important; }
+    .gold-img.glow{ animation: none !important; }
   }
 </style>
 </head>
@@ -195,32 +243,15 @@
         <div class="msg-box">
           <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
 
-          <!-- =======================
-               Choose ONE of the options below
-               ======================= -->
-
-          <!-- Option A (RECOMMENDED): Local image in your repo -->
-          <img
-            src="assets/cny-horse.jpg"
-            alt="Chinese New Year 2026 horse illustration with festive red and gold decoration"
-            loading="lazy"
-            decoding="async"
-          />
-
-          <!-- Option B: Direct Pinterest CDN (replace with the actual .jpg URL you copy) -->
-          <!--
-          <img
-            src="https://i.pinimg.com/originals/XX/YY/ZZ/your-image.jpg"
-            alt="Chinese New Year 2026 horse illustration with festive red and gold decoration"
-            loading="lazy"
-            decoding="async"
-            referrerpolicy="no-referrer"
-          />
-          -->
-
-          <div class="credit">
-            Artwork reference: <a href="https://www.pinterest.com/pin/8373949303770686/" target="_blank" rel="noopener">Pinterest pin</a>
-          </div>
+          <!-- GOLD FRAMED IMAGE -->
+          <figure class="gold-frame">
+            <img
+              src="horse.jpg"
+              alt="Chinese New Year 2026 horse illustration with festive red and gold decoration"
+              loading="lazy"
+              class="gold-img glow"
+            />
+          </figure>
         </div>
 
         <hr class="divider" aria-hidden="true" />
