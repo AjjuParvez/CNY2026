@@ -12,7 +12,7 @@
     --card-border: #b30000;
     --page-bg: radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%) ,
                 radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%) ,
-                #190a06;
+                #190a06; /* deep festive night */
     --text-1: #5b3600;
     --text-2: #7a3d00;
     --accent: #b30000;
@@ -26,20 +26,21 @@
     background: var(--page-bg);
     color: var(--text-1);
     min-height: 100vh;
+    /* NEW: prevent any sideways scrolling from emoji or shadows */
+    overflow-x: hidden;
   }
 
   /* ---------- Floating Lanterns Layer ---------- */
   .lantern-layer{
     position: fixed;
     inset: 0;
-    overflow: hidden;
-    z-index: 0;
-    pointer-events: none;
+    overflow: hidden;         /* clip animation overflow */
+    z-index: 0;               /* behind card */
+    pointer-events: none;     /* let clicks go through */
   }
-
   .lantern{
     position: absolute;
-    width: 40px; height: 60px;
+    width: 40px; height: 60px;        /* slightly smaller for perf */
     display: grid;
     place-items: center;
     filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
@@ -49,6 +50,7 @@
   }
   .lantern span{ font-size: 38px; line-height: 1; }
 
+  /* Keyframes */
   @keyframes rise {
     0%   { transform: translate3d(0,110vh,0); opacity: 0; }
     8%   { opacity: 1; }
@@ -63,7 +65,6 @@
     0%,100% { filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)) brightness(1); }
     50%     { filter: drop-shadow(0 6px 12px rgba(0,0,0,.5)) brightness(1.15); }
   }
-
   .t1{ animation-duration: 26s, 5.5s, 3.8s; animation-delay: 0s, 0s, 0s;}
   .t2{ animation-duration: 30s, 6.2s, 4.4s; animation-delay: 4s, .4s, .8s;}
   .t3{ animation-duration: 34s, 6.8s, 3.6s; animation-delay: 8s, .2s, 1.2s;}
@@ -75,63 +76,87 @@
   /* ---------- Layout: Greeting Card ---------- */
   .wrap{
     position: relative;
-    z-index: 1;
+    z-index: 1;                       /* above lanterns */
     min-height: 100%;
     display: grid;
     place-items: center;
-    padding: 40px 16px;
+    padding: 40px 16px;               /* base padding (mobile-first) */
   }
+  /* NEW: add more breathing room on desktop */
+  @media (min-width: 768px){
+    .wrap{ padding-top: 72px; padding-bottom: 56px; }
+  }
+
   .card{
-    max-width: 860px; width: 100%;
+    /* NEW: ensure we never touch the viewport edges */
+    width: min(860px, calc(100vw - 32px));
     background: var(--card-bg);
     border: 2px solid var(--card-border);
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,.35);
     overflow: hidden;
   }
+
   .card__header{
     background: linear-gradient(135deg, #990000 0%, #b30000 60%, #cc0000 100%);
     padding: 26px 22px; text-align: center; color: var(--accent-2);
   }
-  .card__header h1{ margin:0; font-size:34px; letter-spacing:.5px; }
-  .card__header p{ margin:6px 0 0 0; color:#ffedc9; font-size:18px; }
+
+  /* NEW: scale headings & text safely across desktop widths */
+  .card__header h1{
+    margin:0;
+    letter-spacing:.5px;
+    font-size: clamp(26px, 3.2vw, 40px);
+  }
+  .card__header p{
+    margin:6px 0 0 0;
+    color:#ffedc9;
+    font-size: clamp(14px, 1.6vw, 20px);
+  }
 
   .card__body{ padding: 26px 28px 8px 28px; text-align:center; }
-  .msg{ font-size:20px; color:var(--text-1); line-height:1.7; margin:0 0 18px 0; }
+
+  /* NEW: responsive copy sizes */
+  .msg{
+    font-size: clamp(16px, 1.6vw, 20px);
+    color:var(--text-1);
+    line-height:1.7; margin:0 0 18px 0;
+  }
 
   .msg-box{
     margin: 14px auto 6px; max-width: 720px;
     border: 2px solid var(--card-border); border-radius: 12px;
     background: #fff8ee; padding: 18px;
   }
-  .msg-box .lead{ font-size:18px; color:#6a3d00; margin-bottom:12px; }
+  .msg-box .lead{
+    font-size: clamp(15px, 1.5vw, 18px);
+    color:#6a3d00; margin-bottom:12px;
+  }
   .msg-box img{
     max-width: 100%; height: auto; border-radius:10px;
     box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    display: block; margin: 0 auto;
   }
 
   .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
-  .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); }
+  .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
 
-  /* ---------- Mobile tweaks ---------- */
+  /* ---------- Mobile performance tweaks ---------- */
   @media (max-width: 520px){
-    .card__header h1{ font-size: 28px; }
-    .msg{ font-size: 18px; }
     .lantern{ width: 34px; height: 50px; }
     .lantern span{ font-size: 32px; }
     .hide-sm{ display:none; }
   }
 
-  /* ---------- Reduce Motion ---------- */
+  /* ---------- Respect user “Reduce Motion” ---------- */
   @media (prefers-reduced-motion: reduce){
     .lantern{ animation: none !important; }
   }
 </style>
 </head>
-
 <body>
 
-  <!-- Floating lantern background -->
+  <!-- Floating lantern background layer -->
   <div class="lantern-layer" aria-hidden="true">
     <div class="lantern t1" style="left:2%;"><span>🏮</span></div>
     <div class="lantern t2" style="left:12%;"><span>🧧</span></div>
@@ -150,7 +175,7 @@
     <div class="lantern t7 hide-sm" style="left:70%;"><span>🧧</span></div>
   </div>
 
-  <!-- Foreground Card -->
+  <!-- Foreground greeting card -->
   <div class="wrap">
     <article class="card" role="main" aria-label="Chinese New Year greetings from SGMM Ops">
       <header class="card__header">
@@ -165,14 +190,12 @@
         </p>
 
         <div class="msg-box">
-          <div class="lead">
-            <strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!
-          </div>
+          <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
 
-          <img 
+          <!-- Animated GIF -->
+          <img
             src="https://bestanimations.com/uploads/gifs/1741924090beautiful-happy-lunar-new-year-2026-animated-gif.gif.pagespeed.ce.xc-ynuVQ4j.gif"
-            alt="Happy Lunar New Year 2026 – Year of the Horse animated greeting with fireworks"
-          />
+            alt="Happy Lunar New Year 2026 – Year of the Horse animated greeting with fireworks" />
         </div>
 
         <hr class="divider" aria-hidden="true" />
