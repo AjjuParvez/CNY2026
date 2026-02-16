@@ -26,16 +26,15 @@
     background: var(--page-bg);
     color: var(--text-1);
     min-height: 100vh;
-    /* Prevent sideways scroll from emoji/shadows */
-    overflow-x: hidden;
+    overflow-x: hidden; /* prevent sideways scroll on desktop */
   }
 
   /* ---------- Floating Lanterns Layer ---------- */
   .lantern-layer{
     position: fixed;
     inset: 0;
-    overflow: hidden;  /* clip animation overflow */
-    z-index: 0;        /* behind card */
+    overflow: hidden;
+    z-index: 0;
     pointer-events: none;
   }
   .lantern{
@@ -75,15 +74,14 @@
   /* ---------- Layout: Greeting Card ---------- */
   .wrap{
     position: relative;
-    z-index: 1;  /* above lanterns */
+    z-index: 1; /* above lanterns */
     min-height: 100%;
     display: grid;
     place-items: center;
-    padding: 40px 16px;  /* mobile-first */
+    padding: 40px 16px; /* mobile-first */
   }
-  /* Extra breathing room on desktop */
   @media (min-width: 768px){
-    .wrap{ padding-top: 72px; padding-bottom: 56px; }
+    .wrap{ padding-top: 72px; padding-bottom: 56px; } /* extra space on desktop */
   }
 
   .card{
@@ -97,7 +95,9 @@
 
   .card__header{
     background: linear-gradient(135deg, #990000 0%, #b30000 60%, #cc0000 100%);
-    padding: 26px 22px; text-align: center; color: var(--accent-2);
+    padding: 26px 22px;
+    text-align: center;
+    color: var(--accent-2);
   }
   .card__header h1{
     margin:0;
@@ -127,7 +127,9 @@
     color:#6a3d00; margin-bottom:12px;
   }
   .msg-box img{
-    max-width: 100%; height: auto; border-radius:10px;
+    max-width: 100%;
+    height: auto;
+    border-radius:10px;
     box-shadow: 0 6px 20px rgba(0,0,0,.12);
     display: block; margin: 0 auto;
   }
@@ -193,11 +195,29 @@
         <div class="msg-box">
           <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
 
-          <!-- 🖼️ Local image from your Pinterest pin -->
-          <img src="assets/cny-horse.jpg"
-               alt="Chinese New Year 2026 horse illustration with festive red and gold decoration" loading="lazy" />
+          <!-- =======================
+               Choose ONE of the options below
+               ======================= -->
 
-          <!-- Optional credit (keep if you like) -->
+          <!-- Option A (RECOMMENDED): Local image in your repo -->
+          <img
+            src="assets/cny-horse.jpg"
+            alt="Chinese New Year 2026 horse illustration with festive red and gold decoration"
+            loading="lazy"
+            decoding="async"
+          />
+
+          <!-- Option B: Direct Pinterest CDN (replace with the actual .jpg URL you copy) -->
+          <!--
+          <img
+            src="https://i.pinimg.com/originals/XX/YY/ZZ/your-image.jpg"
+            alt="Chinese New Year 2026 horse illustration with festive red and gold decoration"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+          -->
+
           <div class="credit">
             Artwork reference: <a href="https://www.pinterest.com/pin/8373949303770686/" target="_blank" rel="noopener">Pinterest pin</a>
           </div>
