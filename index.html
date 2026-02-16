@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SGMM Ops — Happy Chinese New Year 2026</title>
-<meta name="version" content="lantern-fix-smaller-continuous-2026-02-16" />
+<meta name="version" content="no-toggle-autofit-lanterns-2026-02-16" />
 
 <style>
   /* ---------- Base & easy tuning ---------- */
@@ -28,13 +28,15 @@
     --gold-4: #a77000;
     --glow:   rgba(255, 204, 64, .35);
 
-    /* Desktop auto-fit defaults (JS will compute the final scale) */
+    /* Desktop auto-fit (scale computed in JS) */
     --desktop-scale: 1;
     --desktop-top-gap: 16px;
+
+    /* Logos (desktop) */
     --logoH-desktop: 56px;
 
-    /* Floating lantern safe zone */
-    --lantern-safe-top: 100px;  /* nothing will render above this line on desktop */
+    /* Floating lanterns: keep header clear */
+    --lantern-safe-top: 120px; /* increase if you still see overlap */
   }
 
   html, body {
@@ -78,23 +80,21 @@
     background-position: 0 0;
   }
 
-  /* ---------- Floating lanterns (animated, smaller, continuous) ---------- */
+  /* ---------- Floating lanterns (smaller, continuous, safe top zone) ---------- */
   #lanterns{
     position: fixed; inset: 0; overflow: hidden;
     z-index: 1;                /* behind card */
     pointer-events: none;
-    /* prevent overlap above the header: clip the top 'safe' band */
-    clip-path: inset(var(--lantern-safe-top) 0 0 0);
+    clip-path: inset(var(--lantern-safe-top) 0 0 0); /* prevents header overlap */
   }
 
   .lantern{
     position: absolute;
-    /* Base size reduced ~30% */
+    /* Reduced base size */
     width: 28px; height: 42px;
     display: grid; place-items: center;
     filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
     backface-visibility: hidden; will-change: transform, filter;
-    /* parent rises; inner sways (so we can include scale in sway transform) */
     animation: rise var(--rise, 32s) linear infinite;
   }
 
@@ -111,7 +111,6 @@
     line-height: 1;
   }
 
-  /* Keyframes */
   @keyframes rise {
     0%   { transform: translate3d(0, 110vh, 0); opacity: 0; }
     8%   { opacity: 1; }
@@ -127,13 +126,13 @@
     50%     { filter: drop-shadow(0 6px 12px rgba(0,0,0,.5)) brightness(1.15); }
   }
 
-  /* ---------- Stage (centers card; desktop auto-fit) ---------- */
+  /* ---------- Stage (centers card; desktop auto-fit always ON) ---------- */
   .stage{
     min-height: 100vh; display: grid; place-items: start center;
     padding: 40px 16px; position: relative; z-index: 2;
   }
   @media (min-width: 900px){
-    body{ overflow-y: hidden; } /* when auto-fit is active */
+    body{ overflow-y: hidden; } /* lock scroll on desktop (auto-fit) */
     .stage{ padding: 0 16px; }
   }
 
@@ -142,7 +141,7 @@
     .desk-scale{ margin-top: var(--desktop-top-gap); transform: scale(var(--desktop-scale)); }
   }
 
-  /* ---------- Card (bigger words & image kept) ---------- */
+  /* ---------- Card (larger words & image) ---------- */
   .card{
     width: min(940px, calc(100vw - 32px));
     background: var(--card-bg);
@@ -231,21 +230,6 @@
     .logo-strip img{ height: var(--logoH-desktop); } /* bigger on desktop */
   }
 
-  /* ---------- Toggle button (Fit / Actual size) ---------- */
-  .toggle-fit{
-    margin-top: 8px;
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 14px;
-    background: #fff5e6;
-    border: 1px solid #b30000; color: #7a3d00;
-    padding: 6px 10px; border-radius: 8px; cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  }
-  .toggle-fit:hover{ background:#ffefd6; }
-  .toggle-fit kbd{
-    background:#b30000; color:#fff; border-radius:4px; padding:1px 6px; font-size:12px;
-  }
-
   /* ---------- Mobile tweaks ---------- */
   @media (max-width: 520px){
     .lantern{ width:24px; height:36px; }
@@ -268,7 +252,7 @@
   <!-- Floating lanterns container (spawned continuously by JS) -->
   <div id="lanterns" aria-hidden="true"></div>
 
-  <!-- Scaled card container (desktop uses auto-fit JS) -->
+  <!-- Scaled card container (auto-fit on desktop; no toggle) -->
   <div class="stage">
     <div id="scaleWrap" class="desk-scale">
       <article id="card" class="card" role="main" aria-label="Chinese New Year greetings from SGMM Ops">
@@ -288,7 +272,13 @@
 
             <!-- Gold frame + glow image -->
             <figure class="gold-frame">
-              <img src="horse1.jpg" alt="Year of the Horse festive greeting" class="gold-img glow" loading="lazy" />
+              <img
+                src="horse1.jpg"
+                alt="Year of the Horse 2026 festive artwork"
+                class="gold-img glow"
+                loading="eager"
+                decoding="async"
+              />
             </figure>
           </div>
 
@@ -301,30 +291,21 @@
             <span class="sep">×</span>
             <img src="Maersk 1.png" alt="Maersk logo" />
           </div>
-
-          <!-- Fit/Actual toggle (desktop) -->
-          <button id="fitToggle" class="toggle-fit" type="button" aria-pressed="true" title="Toggle: Fit to screen / Actual size">
-            <span id="fitLabel">Fit to screen</span> <kbd>F</kbd>
-          </button>
         </section>
       </article>
     </div>
   </div>
 
 <script>
-/* ===== 1) Auto-fit the card on desktop (so full page visible at 100% zoom) ===== */
+/* ===== Auto-fit the card on desktop (no toggle) ===== */
 (function(){
   const wrap = document.getElementById('scaleWrap');
   const card = document.getElementById('card');
-  const btn  = document.getElementById('fitToggle');
-  const label= document.getElementById('fitLabel');
-
-  let fitOn = true;
-  const marginPX = 24;  // top+bottom margin to breathe
+  const marginPX = 24;  // top+bottom breathing room
 
   function applyScale(){
     const desktop = window.matchMedia('(min-width: 900px)').matches;
-    if(!desktop || !fitOn){
+    if(!desktop){
       wrap.style.transform = 'scale(1)';
       document.body.style.overflowY = 'auto';
       return;
@@ -333,43 +314,30 @@
     const cardH = card.scrollHeight;
     const avail = Math.max(200, window.innerHeight - marginPX);
     let s = avail / cardH;
-    s = Math.min(1, Math.max(0.65, s)); // clamp
+    s = Math.min(1, Math.max(0.65, s)); // clamp 0.65–1
     wrap.style.transform = 'scale(' + s.toFixed(4) + ')';
     document.body.style.overflowY = 'hidden';
   }
 
-  function toggleFit(){
-    fitOn = !fitOn;
-    btn.setAttribute('aria-pressed', String(fitOn));
-    label.textContent = fitOn ? 'Fit to screen' : 'Actual size';
-    applyScale();
-  }
-
-  btn.addEventListener('click', toggleFit);
-  window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='f') toggleFit(); });
   window.addEventListener('resize', applyScale);
   window.addEventListener('load', ()=> setTimeout(applyScale, 60));
 })();
 
-/* ===== 2) Floating lanterns: spawn smaller, continuous, non-overlapping at top ===== */
+/* ===== Floating lanterns: spawn smaller, continuous, safe top zone ===== */
 (function(){
   const container = document.getElementById('lanterns');
   if(!container) return;
 
   const EMOJI = ['🏮','🧧'];
-  const COUNT = 18;            // number of lanterns at once (tweak if you want more/less)
-  const VW = () => Math.max(360, window.innerWidth);
+  const COUNT = 25;  // how many lanterns at once
 
   function rand(min, max){ return Math.random() * (max - min) + min; }
 
   function spawnLantern(i){
     const el = document.createElement('div');
     el.className = 'lantern';
-    // random horizontal position across the viewport
     el.style.left = rand(0, 100).toFixed(2) + '%';
-    // staggered delays via negative animation-delay by starting partway
     el.style.animationDelay = (-rand(0, 20)).toFixed(2) + 's';
-    // individual durations (slower to faster)
     el.style.setProperty('--rise',  rand(28, 42).toFixed(2) + 's');
     el.style.setProperty('--sway',  rand(5.0, 7.6).toFixed(2) + 's');
     el.style.setProperty('--tw',    rand(3.2, 5.0).toFixed(2) + 's');
@@ -377,7 +345,6 @@
     const inner = document.createElement('div');
     inner.className = 'lantern__inner';
     inner.style.animationDelay = (-rand(0, 5)).toFixed(2) + 's';
-    // subtle per-lantern scaling 0.80–1.00 (already smaller base)
     inner.style.setProperty('--scale', rand(0.80, 1.00).toFixed(2));
 
     const span = document.createElement('span');
@@ -385,26 +352,23 @@
     inner.appendChild(span);
     el.appendChild(inner);
 
-    // Remove and respawn when one full rise cycle ends (keeps flow continuous)
+    // Remove and respawn to keep the flow continuous
     const riseDur = parseFloat(getComputedStyle(el).getPropertyValue('--rise')) || 32;
     const startDelay = Math.abs(parseFloat(el.style.animationDelay)) || 0;
     setTimeout(()=> {
       if(el.parentNode) container.removeChild(el);
-      spawnLantern(i); // respawn new one
+      spawnLantern(i);
     }, (riseDur - (startDelay % riseDur)) * 1000);
 
     container.appendChild(el);
   }
 
   function init(){
-    // Clear previous (if any) and (re)spawn
     container.innerHTML = '';
     for(let i=0;i<COUNT;i++) spawnLantern(i);
   }
 
-  // Reinitialize on resize to re-randomize positions for new width
   window.addEventListener('resize', ()=> {
-    // throttle: simple debounce
     clearTimeout(init._t);
     init._t = setTimeout(init, 250);
   });
