@@ -33,7 +33,7 @@
     background: var(--page-bg);
     color: var(--text-1);
     min-height: 100vh;
-    overflow-x: hidden; /* prevent sideways scroll on desktop */
+    overflow-x: hidden;
   }
 
   /* ---------- Floating Lanterns Layer ---------- */
@@ -87,9 +87,6 @@
     place-items: center;
     padding: 40px 16px; /* mobile-first */
   }
-  @media (min-width: 768px){
-    .wrap{ padding-top: 72px; padding-bottom: 56px; } /* extra space on desktop */
-  }
 
   .card{
     width: min(860px, calc(100vw - 32px));
@@ -134,14 +131,12 @@
     color:#6a3d00; margin-bottom:12px;
   }
 
-  /* ---------- GOLD FRAME + GLOW for the image ---------- */
+  /* ---------- GOLD FRAME + GLOW ---------- */
   .gold-frame{
     position: relative;
     border-radius: 14px;
-    padding: 10px; /* space for the visible frame around the picture */
-    /* Metallic gold ring using gradient */
+    padding: 10px; /* frame thickness */
     background: linear-gradient(145deg, var(--gold-4), var(--gold-2), var(--gold-1), var(--gold-3));
-    /* Ambient outer glow */
     box-shadow:
       0 0 0 1px rgba(0,0,0,.05) inset,
       0 14px 28px rgba(0,0,0,.18),
@@ -149,7 +144,6 @@
     transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
   }
   .gold-frame::before{
-    /* inner bevel shine */
     content:"";
     position: absolute; inset: 4px;
     border-radius: 10px;
@@ -172,24 +166,43 @@
     width: 100%;
     height: auto;
     border-radius: 10px;
-    /* Inner glow and subtle edge */
     box-shadow:
       inset 0 0 0 1px rgba(255,255,255,.35),
       inset 0 0 24px rgba(255, 240, 140, .35);
   }
 
-  /* Gentle shimmering glow animation (optional, subtle) */
   @keyframes shimmer {
-    0%   { box-shadow: 0 0 0 1px rgba(255,255,255,.35), inset 0 0 24px rgba(255,240,140,.30); }
-    50%  { box-shadow: 0 0 0 1px rgba(255,255,255,.45), inset 0 0 36px rgba(255,240,160,.45); }
-    100% { box-shadow: 0 0 0 1px rgba(255,255,255,.35), inset 0 0 24px rgba(255,240,140,.30); }
+    0%   { box-shadow: inset 0 0 24px rgba(255,240,140,.30); }
+    50%  { box-shadow: inset 0 0 36px rgba(255,240,160,.45); }
+    100% { box-shadow: inset 0 0 24px rgba(255,240,140,.30); }
   }
-  .gold-img.glow {
-    animation: shimmer 4.2s ease-in-out infinite;
-  }
+  .gold-img.glow { animation: shimmer 4.2s ease-in-out infinite; }
 
   .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
   .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
+
+  /* ---------- One‑page fit on DESKTOP ---------- */
+  /* When viewport is wide enough, compress vertical rhythm and cap image height so everything fits without scroll. */
+  @media (min-width: 900px){
+    .wrap{ padding: 24px 12px; }
+    .card__header{ padding: 18px 16px; }
+    .card__header h1{ font-size: clamp(24px, 2.6vw, 34px); }
+    .card__header p{ font-size: clamp(12px, 1.2vw, 16px); }
+    .card__body{ padding: 18px 20px 8px 20px; }
+    .msg{ margin: 8px 0 14px 0; font-size: clamp(15px, 1.2vw, 18px); }
+    .msg-box{ padding: 14px; }
+    .divider{ margin: 14px auto; }
+    .footer{ padding-bottom: 14px; }
+
+    /* Cap the visual so the card content fits in ~96vh including paddings */
+    .gold-img{
+      /* Keep width responsive, but limit height so page doesn't scroll */
+      max-height: 52vh;       /* adjust this number if your screen still scrolls */
+      width: auto;            /* allow natural width until it hits container */
+      max-width: 100%;        /* never exceed container width */
+      object-fit: contain;    /* preserve entire image */
+    }
+  }
 
   /* ---------- Mobile tweaks ---------- */
   @media (max-width: 520px){
@@ -243,13 +256,14 @@
         <div class="msg-box">
           <div class="lead"><strong>马到成功 · Mǎ dào chéng gōng</strong> — May success arrive swiftly!</div>
 
-          <!-- GOLD FRAMED IMAGE -->
+          <!-- Gold frame + glow image -->
           <figure class="gold-frame">
             <img
               src="horse.jpg"
-              alt="Chinese New Year 2026 horse illustration with festive red and gold decoration"
-              loading="lazy"
+              alt="Chinese New Year 2026 horse illustration in red and gold"
               class="gold-img glow"
+              loading="lazy"
+              decoding="async"
             />
           </figure>
         </div>
