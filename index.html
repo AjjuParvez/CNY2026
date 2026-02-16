@@ -10,8 +10,8 @@
   :root{
     --card-bg: rgba(255,255,255,0.92);
     --card-border: #b30000;
-    --page-bg: radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%) ,
-                radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%) ,
+    --page-bg: radial-gradient(1200px 600px at 70% -10%, #ffeed0 0%, rgba(255,238,208,0.0) 60%),
+                radial-gradient(900px 500px at 20% 110%, #ffd9a8 0%, rgba(255,217,168,0.0) 60%),
                 #190a06; /* deep festive night */
     --text-1: #5b3600;
     --text-2: #7a3d00;
@@ -85,7 +85,7 @@
     min-height: 100%;
     display: grid;
     place-items: center;
-    padding: 40px 16px; /* mobile-first (keeps current mobile feel) */
+    padding: 40px 16px; /* mobile-first */
   }
 
   .card{
@@ -183,7 +183,7 @@
 
   /* ---------- DESKTOP: force one‑page fit ---------- */
   @media (min-width: 900px){
-    /* Compact the vertical rhythm */
+    /* Compact spacing */
     .wrap{ padding: 20px 12px; min-height: 100vh; }
     .card{
       display: flex; flex-direction: column;
@@ -199,16 +199,13 @@
     .divider{ margin: 12px auto; }
     .footer{ padding-bottom: 12px; }
 
-    /* Image sizing to ensure no scroll on typical desktops */
-    :root{
-      /* ↓ If you still see a small scroll bar, reduce this to 52vh or 50vh */
-      --imgMaxVH: 54vh;
-    }
+    /* Image sizing so the whole card fits */
+    :root{ --imgMaxVH: 54vh; } /* ↓ If you still see scroll: try 52vh or 50vh */
     .gold-img{
       max-height: var(--imgMaxVH);
       width: auto;
       max-width: 100%;
-      object-fit: contain; /* keep full image visible */
+      object-fit: contain;
     }
   }
 
@@ -266,7 +263,13 @@
 
           <!-- Gold frame + glow image -->
           <figure class="gold-frame">
-            <img src="horse.jpg" alt="Golden horse CNY 2026 illustration" class="gold-img glow" loading="lazy" decoding="async" />
+            <img
+              src="horse1.jpg"
+              alt="Chinese New Year 2026 red-and-gold horse illustration"
+              class="gold-img glow"
+              loading="lazy"
+              decoding="async"
+            />
           </figure>
         </div>
 
