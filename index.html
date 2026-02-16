@@ -85,7 +85,7 @@
     min-height: 100%;
     display: grid;
     place-items: center;
-    padding: 40px 16px; /* mobile-first */
+    padding: 40px 16px; /* mobile-first (keeps current mobile feel) */
   }
 
   .card{
@@ -181,30 +181,38 @@
   .divider{ border:0; border-top:2px solid var(--card-border); margin:22px auto; width:84%; }
   .footer{ text-align:center; padding:0 0 28px 0; color:var(--text-2); font-size: clamp(14px, 1.4vw, 16px); }
 
-  /* ---------- One‑page fit on DESKTOP ---------- */
-  /* When viewport is wide enough, compress vertical rhythm and cap image height so everything fits without scroll. */
+  /* ---------- DESKTOP: force one‑page fit ---------- */
   @media (min-width: 900px){
-    .wrap{ padding: 24px 12px; }
-    .card__header{ padding: 18px 16px; }
+    /* Compact the vertical rhythm */
+    .wrap{ padding: 20px 12px; min-height: 100vh; }
+    .card{
+      display: flex; flex-direction: column;
+      max-height: 96vh; /* fits inside the screen */
+    }
+    .card__header{ padding: 16px 16px; }
     .card__header h1{ font-size: clamp(24px, 2.6vw, 34px); }
     .card__header p{ font-size: clamp(12px, 1.2vw, 16px); }
-    .card__body{ padding: 18px 20px 8px 20px; }
-    .msg{ margin: 8px 0 14px 0; font-size: clamp(15px, 1.2vw, 18px); }
-    .msg-box{ padding: 14px; }
-    .divider{ margin: 14px auto; }
-    .footer{ padding-bottom: 14px; }
 
-    /* Cap the visual so the card content fits in ~96vh including paddings */
+    .card__body{ padding: 14px 18px 6px 18px; }
+    .msg{ margin: 6px 0 12px; font-size: clamp(15px, 1.2vw, 18px); }
+    .msg-box{ padding: 12px; margin: 10px auto 4px; }
+    .divider{ margin: 12px auto; }
+    .footer{ padding-bottom: 12px; }
+
+    /* Image sizing to ensure no scroll on typical desktops */
+    :root{
+      /* ↓ If you still see a small scroll bar, reduce this to 52vh or 50vh */
+      --imgMaxVH: 54vh;
+    }
     .gold-img{
-      /* Keep width responsive, but limit height so page doesn't scroll */
-      max-height: 52vh;       /* adjust this number if your screen still scrolls */
-      width: auto;            /* allow natural width until it hits container */
-      max-width: 100%;        /* never exceed container width */
-      object-fit: contain;    /* preserve entire image */
+      max-height: var(--imgMaxVH);
+      width: auto;
+      max-width: 100%;
+      object-fit: contain; /* keep full image visible */
     }
   }
 
-  /* ---------- Mobile tweaks ---------- */
+  /* ---------- Mobile performance tweaks ---------- */
   @media (max-width: 520px){
     .lantern{ width: 34px; height: 50px; }
     .lantern span{ font-size: 32px; }
@@ -258,13 +266,7 @@
 
           <!-- Gold frame + glow image -->
           <figure class="gold-frame">
-            <img
-              src="horse.jpg"
-              alt="Chinese New Year 2026 horse illustration in red and gold"
-              class="gold-img glow"
-              loading="lazy"
-              decoding="async"
-            />
+            <img src="horse.jpg" alt="Golden horse CNY 2026 illustration" class="gold-img glow" loading="lazy" decoding="async" />
           </figure>
         </div>
 
